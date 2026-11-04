@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "_doc": "Entity types. kind decides the rule (block / spike / coin); counts_as_new: true means it is a teaching unit (max 2 new per level).",
+  "entities": [
+    { "id": "T01_block", "kind": "block" },
+    { "id": "H01_spike", "kind": "spike", "w": 64, "h": 32, "counts_as_new": true },
+    { "id": "H02_spike_wide", "kind": "spike", "w": 128, "h": 32, "counts_as_new": true },
+    { "id": "C01_coin", "kind": "coin" }
+  ]
+}

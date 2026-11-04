@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "_doc": "Feel parameters (template values from a runner prototype; tune them on a phone).",
+  "speed": 620,
+  "gravity": 8000,
+  "jumpVelocity": 1650,
+  "holdGravityFactor": 0.45,
+  "holdMaxMs": 200,
+  "maxJumps": 2,
+  "airJumpRatio": 0.75,
+  "coyoteMs": 80,
+  "inputBufferMs": 100,
+  "invincibleMs": 1200,
+  "hp": 3
+}

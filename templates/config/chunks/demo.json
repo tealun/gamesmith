@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "scene": "demo",
+  "chunks": [
+    {
+      "id": "demo_d1_01", "difficulty": 1, "lengthPx": 1600, "safeHeadPx": 192, "safeTailPx": 192,
+      "entities": [
+        { "type": "hazard", "ref": "H01_spike", "x": 384 },
+        { "type": "pickup", "ref": "C01_coin", "x": 416, "y": 160 },
+        { "type": "hazard", "ref": "H01_spike", "x": 832 },
+        { "type": "hazard", "ref": "H01_spike", "x": 1216 }
+      ]
+    },
+    {
+      "id": "demo_d1_02", "difficulty": 1, "lengthPx": 1600, "safeHeadPx": 192, "safeTailPx": 192,
+      "entities": [
+        { "type": "terrain", "ref": "T01_block", "x": 384, "w": 192, "h": 96 },
+        { "type": "pickup", "ref": "C01_coin", "x": 480, "y": 160 },
+        { "type": "hazard", "ref": "H01_spike", "x": 768 },
+        { "type": "terrain", "ref": "T01_block", "x": 1088, "w": 128, "h": 64 }
+      ]
+    },
+    {
+      "id": "demo_d2_01", "difficulty": 2, "lengthPx": 1600, "safeHeadPx": 192, "safeTailPx": 192,
+      "entities": [
+        { "type": "hazard", "ref": "H02_spike_wide", "x": 352 },
+        { "type": "hazard", "ref": "H01_spike", "x": 704 },
+        { "type": "terrain", "ref": "T01_block", "x": 960, "w": 128, "h": 96 },
+        { "type": "hazard", "ref": "H01_spike", "x": 1152 }
+      ]
+    }
+  ]
+}
