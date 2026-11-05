@@ -1,0 +1,8 @@
+{
+  "schema": 1,
+  "maxNewPerLevel": 2,
+  "levels": [
+    { "id": "1-1", "chunks": ["demo_d1_01", "demo_d1_02"], "savePointAfter": 1 },
+    { "id": "1-2", "chunks": ["demo_d1_02", "demo_d2_01"], "savePointAfter": 1 }
+  ]
+}

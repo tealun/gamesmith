@@ -1,0 +1,12 @@
+{
+  "name": "gamesmith-templates",
+  "private": true,
+  "type": "module",
+  "description": "Minimal runnable skeletons: engine-free core, config + validator, chunk solver, preview, sync script.",
+  "scripts": {
+    "validate": "python3 validate_config.py",
+    "test": "node --test core.test.mjs",
+    "solve": "node solve.mjs",
+    "preview": "node preview.mjs preview_out"
+  }
+}
