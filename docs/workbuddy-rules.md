@@ -29,7 +29,7 @@ gamesmith 只有一个技能，所以包就是技能文件夹本身，不需要 
 | 编码 UTF-8 无 BOM | 第三方 | `validate_package()`：逐个文本文件检查 BOM 与 UTF-8 解码 |
 | 换行统一 LF | 第三方 | `read_normalized()`：打包时把文本文件的 CRLF 换成 LF；仓库 `.gitattributes` 为 `* -text`，存的本来就是 LF |
 | 排除 `__pycache__`、`.git`、`.DS_Store`、`node_modules`、`*.pyc` | 第三方 | `EXCLUDE_PATTERNS`（另排除 `preview_out`）；`.git` 不会进包：只收 `gamesmith/` 目录里的文件和 `LICENSE` |
-| 压缩包根目录直接放 `SKILL.md`，不要多套一层目录 | 第三方 | 不校验：dev-pdca 实测内含顶层文件夹的包已解析通过；如被拒，改传 Release 里的 `-flat.zip` |
+| 压缩包根目录直接放 `SKILL.md`，不要多套一层目录 | 第三方 | 不校验：dev-pdca 实测内含顶层文件夹的包已解析通过；只有因这一条（目录层级）被拒时才改传 Release 里的 `-flat.zip`；其他原因被拒，先把规则登记进本表、补检查、修复，再重新上传同一个包 |
 | `name` 全平台唯一 | 第三方 | 不能本地校验：只有上传时平台才能判断（规划 V2） |
 | `category` 建议填写 | 第三方 | 已填 `developer`，不强制校验 |
 | 包内可以带脚本文件（`.py`、`.mjs`） | 未知 | 不校验：没有找到规则；dev-pdca 的包带 `.py` 已通过。gamesmith 还带 `.mjs`，上传结果回填本行（规划 V2） |

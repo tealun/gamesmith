@@ -50,11 +50,11 @@
 
 ### WorkBuddy 等只接受单个技能压缩包的平台
 
-从最新 Release 下载 `gamesmith-workbuddy.zip`，在平台的技能上传入口选择它。如果平台要求 `SKILL.md` 直接位于压缩包根目录，改用同一 Release 里的 `gamesmith-workbuddy-<版本>-flat.zip`。
+从最新 Release 下载 `gamesmith-workbuddy.zip`，在平台的技能上传入口选择它。只有平台因目录层级（要求 `SKILL.md` 直接位于压缩包根目录）拒收时，才改用同一 Release 里的 `gamesmith-workbuddy-<版本>-flat.zip`。
 
 ## 隐私
 
-技能只是一组说明和骨架代码，不收集、不发送任何数据，见 [隐私政策](https://github.com/tealun/gamesmith/blob/main/PRIVACY.md)。骨架脚本只在你自己的项目里由你或 Claude 运行，只读写本地文件。
+技能只是一组说明和骨架代码，不收集、不发送任何数据，见 [隐私政策](https://github.com/tealun/gamesmith/blob/main/PRIVACY.md)。插件本身不会执行任何代码；骨架脚本要复制进你自己的项目、装好依赖（预览工具需要 Playwright 和 Chromium）后，由你或 Claude 在项目里运行，只读写本地文件。
 
 ## 许可
 
