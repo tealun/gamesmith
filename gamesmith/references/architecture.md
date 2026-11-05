@@ -86,15 +86,19 @@ game/core/*.ts ───────┘
 
 在 `AGENTS.md` 维护一张「命令 | 作用 | 何时必跑」表，例如：
 
-| 命令 | 何时必跑 |
-|---|---|
-| `python3 tools/validate_config.py` | 改任何配置后 |
-| `cd game && npm test && npm run typecheck` | 改 core 或 view 后 |
-| `cd game && npm run solve [-- <id>]` | 改片段、手感参数、物理后 |
-| `node tools/render_sprites.js` | 改绘制代码后 |
-| `node tools/preview.js <dir> [ui\|id]` | 改 view 或图集后，看截图 |
-| `python3 tools/sync_to_engine.py <工程>` | 打开引擎构建前 |
-| `python3 tools/make_metas.py` | 新增引擎资源后（见平台文档） |
+命令名按你项目里的实际脚本写；下表的文件名与 `templates/` 一致的可直接参考骨架，标「无骨架」的按对应文档自行实现。
+
+| 命令 | 何时必跑 | 预期耗时 / 前置 |
+|---|---|---|
+| `cd game && npm ci` | 首次、或 lock 文件变化后 | 测试和类型检查依赖 devDependencies（如 `@types/node`、`typescript`），不装会报类型找不到 |
+| `python3 tools/validate_config.py` | 改任何配置后 | 秒级；骨架 `templates/validate_config.py` |
+| `cd game && npm test && npm run typecheck` | 改 core 或 view 后 | 秒级；骨架 `templates/core.test.mjs` |
+| `cd game && npm run solve [-- <id>]` | 改片段、手感参数、物理后 | 每个片段几秒到十几秒，片段多时全量要很久：在命令表里写明实测耗时，按场景前缀分片并行；证据规则见 `launch-checklist.md` E 节。骨架 `templates/solve.mjs` |
+| `node tools/render_sprites.js` | 改绘制代码后 | 无骨架，做法见 `art-pipeline.md` |
+| `node tools/preview.mjs <dir> [ui\|id]` | 改 view 或图集后，看截图 | 骨架 `templates/preview.mjs`（只画片段，界面截图要自行扩展） |
+| `python3 tools/sync_to_engine.py <工程>` | 打开引擎构建前 | 骨架 `templates/sync_to_engine.py` |
+| `python3 tools/make_metas.py` | 新增引擎资源后 | 无骨架，做法见 `platform-wechat-cocos.md` 第 7 节 |
+| `python3 tools/add_scene.py <规格> --solve` | 新增场景时 | 无骨架，做法见 `level-pipeline.md` 第 4 节与「新增场景检查表」 |
 
 ## 示例
 

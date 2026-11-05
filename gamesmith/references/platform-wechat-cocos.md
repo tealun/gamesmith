@@ -33,6 +33,7 @@
 ## 3. 构建模板与配置入库
 
 - 构建设置与 Bundle 配置会写进工程文件（示例：`settings/v2/packages/builder.json`、`assets/<bundle>.meta`），**入库**。
+- 不是所有构建选项都会入库。示例项目（3.8.8）实测：`builder.json` 只记录 Bundle 配置；引擎模块裁剪记在 `settings/v2/packages/engine.json`；**Debug、Orientation、Start Scene 等是构建面板里每个构建任务的选项**，仓库里查不到。要证明它们正确，需要构建面板截图，或看构建产物（主包大小、开发者工具的代码依赖分析）。在环境搭建指引里把这些选项写成「每次构建」的步骤。
 - 微信构建模板 `build-templates/wechatgame/project.config.json` 每次构建覆盖产物：
   - `appid` 为空 → 开发者工具回到游客模式，预览/真机调试变灰；
   - 测试号要选**小游戏**测试号，误用小程序测试号会报「未找到 app.json」；

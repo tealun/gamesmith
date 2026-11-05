@@ -1,6 +1,6 @@
 # 规划：gamesmith 发布体系（插件目录 + tealun 市场 + WorkBuddy）
 
-日期：2026-11-05 · 归属：Tealun + AI · 依据：用户 2026-11-05 指令（照搬 tealun/tealun-dev-pdca 的发布体系，不修改该仓库）
+日期：2026-11-05 · 归属：Tealun + AI · 依据：照搬 tealun/tealun-dev-pdca 的发布体系
 
 ## 理解卡
 
@@ -58,7 +58,7 @@
 ## 阶段门槛
 
 - **M0（本地）**：两张对照表登记完；`build_plugin.py --check`、`build_suite.py --check`、`check_ledger.py`、`unittest`、骨架检查全部通过；`claude plugin validate` 对打包产物无报错。失败即不推送。
-- **M1（试跑）**：全新 agent 只拿到 `gamesmith/SKILL.md` 路径，在 carrot-run（只读，产出写会话 scratchpad）上执行一次，列出指令不清、矛盾、缺失之处；核实后修改技能。
+- **M1（试跑）**：全新 agent 只拿到 `gamesmith/SKILL.md` 路径，在一个真实的小游戏项目上执行一次（样本项目只读，产出写到会话的临时目录），列出指令不清、矛盾、缺失之处；核实后修改技能。
 - **M2（发布）**：auditor 审计通过 → 推 tag → Release 附件齐全、`plugin` 分支只含打包产物 → tealun 市场条目上线，`check_marketplace.py` 与 `claude plugin validate .` 通过。
 - **M3（平台）**：插件目录提交（Tealun 在门户操作，首版要审核员批准，配置 push webhook）；WorkBuddy 上传。结果回填 V1–V4。
 
