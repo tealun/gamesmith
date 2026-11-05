@@ -1,0 +1,59 @@
+name: release
+
+# Publishing happens only by pushing a v<version> tag; the tag must equal plugin.json's version.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: WorkBuddy package validates and builds
+        run: python3 scripts/build_suite.py --check
+      - name: evolution ledger and compliance log are well-formed
+        run: python3 scripts/check_ledger.py
+      - name: script unit tests
+        run: python3 -m unittest discover -s tests
+      - name: skeletons in gamesmith/templates run
+        working-directory: gamesmith/templates
+        run: |
+          python3 validate_config.py
+          node --test core.test.mjs
+          node solve.mjs
+      - name: plugin checks for this tag
+        run: |
+          previous=$(git describe --tags --abbrev=0 "${GITHUB_REF_NAME}^" 2>/dev/null || true)
+          python3 scripts/build_plugin.py --check --tag "$GITHUB_REF_NAME" ${previous:+--since "$previous"}
+      - name: build the plugin and the WorkBuddy package
+        run: |
+          python3 scripts/build_plugin.py
+          python3 scripts/build_suite.py
+      - name: validate with the Claude Code CLI (no skip when it is unavailable)
+        run: npx -y @anthropic-ai/claude-code@2.1.318 plugin validate dist/gamesmith/.claude-plugin/plugin.json
+      - name: release notes from CHANGELOG
+        run: python3 scripts/build_plugin.py --notes "$RUNNER_TEMP/notes.md"
+      - name: create the GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          gh release create "$GITHUB_REF_NAME" \
+            "dist/gamesmith-${version}.plugin" \
+            "dist/gamesmith-${version}.zip" \
+            dist/gamesmith-workbuddy.zip \
+            "dist/gamesmith-workbuddy-${version}-flat.zip" \
+            --title "Gamesmith ${version}" \
+            --notes-file "$RUNNER_TEMP/notes.md"

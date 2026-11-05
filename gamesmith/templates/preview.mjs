@@ -1,22 +1,19 @@
 #!/usr/bin/env node
 // Engine-free preview (template): render every chunk with the solver's most forgiving route in a headless browser
 // and save PNGs, so an AI assistant in a cloud container (no editor) can "see" content and reviewers get stable shots.
-//   node tools/preview.mjs <output dir> [chunkId]
+//   node preview.mjs <output dir> [chunkId]
 // Needs Playwright with Chromium. In a real project, bundle your view layer (esbuild) + a canvas stand-in for the
 // engine sprite host instead of the inline drawing below, and add modes such as `ui` (all screens) and `shots`.
-import { readFileSync, readdirSync, mkdirSync } from 'node:fs';
+import { mkdirSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import path from 'node:path';
-import { Sim, DT, START_X, buildConfig } from '../core/sim.mjs';
-import { solveChunk } from './solve.mjs';
+import { Sim, START_X } from './sim.mjs';
+import { solveChunk, loadConfig } from './solve.mjs';
 
 const require = createRequire(import.meta.url);
 const { chromium } = require('playwright');
 const out = path.resolve(process.argv[2] || 'preview_out'), only = process.argv[3];
-const D = new URL('../config/', import.meta.url).pathname;
-const r = f => JSON.parse(readFileSync(D + f, 'utf8'));
-const cfg = buildConfig({ player: r('player.json'), entities: r('entities.json'), levels: r('levels.json'), solver: r('solver.json'),
-  chunks: readdirSync(D + 'chunks').filter(f => f.endsWith('.json')).map(f => r('chunks/' + f)) });
+const cfg = loadConfig();
 
 /** Replay a route and sample the player's path (chunk-relative). */
 function trace(chunk, speed, acts) {

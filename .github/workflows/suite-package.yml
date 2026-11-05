@@ -1,0 +1,38 @@
+name: checks
+
+# Every push and pull request: the same checks AGENTS.md requires before a commit.
+on:
+  push:
+    # the plugin branch holds only the built plugin (see plugin-branch.yml); nothing here applies to it
+    branches-ignore: [plugin]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: WorkBuddy package validates and builds
+        run: python3 scripts/build_suite.py --check
+      - name: evolution ledger and compliance log are well-formed
+        run: python3 scripts/check_ledger.py
+      - name: script unit tests
+        run: python3 -m unittest discover -s tests
+      - name: plugin manifest, directory rules, version bump since the last tag
+        run: |
+          previous=$(git describe --tags --abbrev=0 2>/dev/null || true)
+          python3 scripts/build_plugin.py --check ${previous:+--since "$previous"}
+      - name: skeletons in gamesmith/templates run (validator, rule tests, solver)
+        working-directory: gamesmith/templates
+        run: |
+          python3 validate_config.py
+          node --test core.test.mjs
+          node solve.mjs

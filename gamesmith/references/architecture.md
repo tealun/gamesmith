@@ -52,7 +52,7 @@ game/core/*.ts ───────┘
 
 每次真机问题若能用静态规则描述，就加一条校验（见 `playtest-loop.md`）。验证新规则：先让它对已知坏数据报错，再修数据到 0 错误。
 
-骨架：`templates/tools/validate_config.py`。
+骨架：`templates/validate_config.py`。
 
 ## 4. 同步脚本
 
@@ -61,7 +61,7 @@ game/core/*.ts ───────┘
 - 处理引擎打包器差异（例：Cocos 打包器不接受 `import './x.ts'` 的后缀，同步时去掉）。
 - 源里已删除的配置，同步时连同 meta 一起删除。
 
-骨架：`templates/tools/sync_to_engine.py`。
+骨架：`templates/sync_to_engine.py`。
 
 ## 5. 无引擎预览工具
 
@@ -73,7 +73,7 @@ game/core/*.ts ───────┘
 3. 收集 `pageerror` 与 console error，有错即非 0 退出。
 4. 参数：`<输出目录> [ui | 片段id | shots]`；`ui` 截全部界面（按手机比例并模拟刘海与胶囊），`shots` 按清单生成提审截图。
 
-骨架：`templates/tools/preview.mjs`（画布直绘版，演示流程）。
+骨架：`templates/preview.mjs`（画布直绘版，演示流程）。
 
 ## 6. 测试
 

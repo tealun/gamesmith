@@ -44,7 +44,7 @@
 
 - 实测：微信构建把 `[...new Set(arr)]` 编成 `[Set]`（数组里只有一个 Set 对象），逻辑静默出错（示例：已解锁场景列表变成 Set 对象，场景图集永远加载不到，无尽模式进不去）。
 - 做法：用 `Array.from(set)`；对 Set/Map 也避免 `for…of` 与展开 `.keys()/.values()/.entries()`。
-- 防线：一条源码扫描测试，遍历核心与画面代码，匹配 `\[\.\.\.new (Set|Map)\b` 与 `\.\.\.(\w+\.)?(keys|values|entries)\(\)` 即失败（骨架见 `templates/test/core.test.mjs`）。
+- 防线：一条源码扫描测试，遍历核心与画面代码，匹配 `\[\.\.\.new (Set|Map)\b` 与 `\.\.\.(\w+\.)?(keys|values|entries)\(\)` 即失败（骨架见 `templates/core.test.mjs`）。
 - 教训：先看「为什么等不到」，而不是加超时掩盖。该 bug 先表现为「加载场景中…」卡住，加超时只是让它不卡，根因在列表类型。
 
 ## 5. 真机调试与屏幕报错

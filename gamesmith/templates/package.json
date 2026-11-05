@@ -4,9 +4,9 @@
   "type": "module",
   "description": "Minimal runnable skeletons: engine-free core, config + validator, chunk solver, preview, sync script.",
   "scripts": {
-    "validate": "python3 tools/validate_config.py",
-    "test": "node --test test/*.test.mjs",
-    "solve": "node tools/solve.mjs",
-    "preview": "node tools/preview.mjs preview_out"
+    "validate": "python3 validate_config.py",
+    "test": "node --test core.test.mjs",
+    "solve": "node solve.mjs",
+    "preview": "node preview.mjs preview_out"
   }
 }

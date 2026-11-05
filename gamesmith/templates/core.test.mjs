@@ -1,15 +1,12 @@
-// Rule tests for the template core (node --test test/). One test per rule; one regression test per playtest bug,
+// Rule tests for the template core (node --test core.test.mjs). One test per rule; one regression test per playtest bug,
 // named after the symptom and the date it was found.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync, readdirSync } from 'node:fs';
-import { Sim, DT, buildConfig } from '../core/sim.mjs';
-import { solveChunk } from '../tools/solve.mjs';
+import { readFileSync } from 'node:fs';
+import { Sim, DT } from './sim.mjs';
+import { solveChunk, loadConfig } from './solve.mjs';
 
-const D = new URL('../config/', import.meta.url).pathname;
-const r = f => JSON.parse(readFileSync(D + f, 'utf8'));
-const cfg = buildConfig({ player: r('player.json'), entities: r('entities.json'), levels: r('levels.json'), solver: r('solver.json'),
-  chunks: readdirSync(D + 'chunks').filter(f => f.endsWith('.json')).map(f => r('chunks/' + f)) });
+const cfg = loadConfig();
 const empty = (lengthPx = 1600) => ({ id: 'test_d1_00', difficulty: 1, lengthPx, safeHeadPx: 0, safeTailPx: 0, entities: [] });
 const run = (g, sec) => { for (let i = 0; i < Math.round(sec / DT); i++) g.step(); };
 
@@ -52,11 +49,10 @@ test('every demo chunk clears unhurt', () => {
 
 // Guard for an ES5 build pitfall: some mini-game builds compile [...new Set(x)] into [Set] (an array holding the Set).
 test('no spread or for-of over a Set/Map in shipped code', () => {
-  const dirs = [new URL('../core/', import.meta.url)];
+  const shipped = ['sim.mjs'];                          // code that goes into the engine build (the core)
   const bad = [];
-  for (const d of dirs) for (const f of readdirSync(d)) {
-    if (!/\.(m?js|ts)$/.test(f)) continue;
-    readFileSync(new URL(f, d), 'utf8').split('\n').forEach((line, i) => {
+  for (const f of shipped) {
+    readFileSync(new URL(f, import.meta.url), 'utf8').split('\n').forEach((line, i) => {
       if (/\[\.\.\.new (Set|Map)\b|\.\.\.(\w+\.)?(keys|values|entries)\(\)|for\s*\(\s*const\s+\w+\s+of\s+\w+\.(keys|values|entries)\(\)/.test(line)) bad.push(`${f}:${i + 1}`);
     });
   }

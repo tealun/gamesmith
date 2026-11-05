@@ -1,0 +1,42 @@
+name: plugin branch
+
+# The Claude plugin directory and the tealun marketplace track the `plugin` branch, which holds only the built
+# plugin (skill, plugin.json, README, LICENSE, icon) and none of the repository's tooling. This workflow is the
+# only writer of that branch: on a release tag, or by hand (workflow_dispatch) from main to fill or refresh it.
+# See docs/88_planning/plugin-release-20261105.md.
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: plugin-branch
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    # only released or main content may reach the plugin branch, never a feature branch
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: plugin checks
+        run: python3 scripts/build_plugin.py --check
+      - name: build the plugin
+        run: python3 scripts/build_plugin.py
+      - name: validate the built plugin with the Claude Code CLI
+        run: npx -y @anthropic-ai/claude-code@2.1.318 plugin validate dist/gamesmith/.claude-plugin/plugin.json
+      - name: commit the built plugin to the plugin branch
+        run: scripts/publish_plugin_branch.sh dist/gamesmith plugin

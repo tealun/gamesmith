@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Validate config/ (template). Run after every config change; exit code 1 lists every error at once.
+"""Validate the config tables next to this file (template). Run after every config change; exit code 1 lists every error at once.
 
-    python3 tools/validate_config.py [--build-template <path to project.config.json>]
+    python3 validate_config.py [--build-template <path to project.config.json>]
 
 Groups: structure (schema, unique ids) → references → ranges → content rules → teaching pace → build template.
 Add a rule every time a playtest bug can be described statically, and prove it: it must report the bad data first.
@@ -11,8 +11,7 @@ import pathlib
 import re
 import sys
 
-ROOT = pathlib.Path(__file__).resolve().parent.parent
-CFG = ROOT / "config"
+CFG = pathlib.Path(__file__).resolve().parent   # in a real project: the config/ folder
 GRID = 32
 errors = []
 
@@ -52,14 +51,14 @@ for name, data in (("player.json", player), ("entities.json", entities), ("level
     schema_ok(data, name)
 kinds = {e["id"]: e for e in entities.get("entities", [])}
 unique(entities.get("entities", []), "entities.json")
-chunk_files = sorted((CFG / "chunks").glob("*.json"))
+chunk_files = sorted(CFG.glob("chunks_*.json"))
 chunks = {}
 for f in chunk_files:
-    lib = load(f"chunks/{f.name}")
-    schema_ok(lib, f"chunks/{f.name}")
+    lib = load(f.name)
+    schema_ok(lib, f.name)
     for c in lib.get("chunks", []):
         if c.get("id") in chunks:
-            err(f"chunks/{f.name}", f"duplicate chunk id {c.get('id')}")
+            err(f.name, f"duplicate chunk id {c.get('id')}")
         chunks[c.get("id")] = c
 
 # ---- ranges (player feel)

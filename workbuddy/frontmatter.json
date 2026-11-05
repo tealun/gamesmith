@@ -1,0 +1,19 @@
+{
+  "_doc": "WorkBuddy-only frontmatter, merged into the package's SKILL.md by scripts/build_suite.py (name and description come from gamesmith/SKILL.md, version from .claude-plugin/plugin.json). Limits: docs/workbuddy-rules.md.",
+  "display_name": "小游戏开发 gamesmith",
+  "display_name_en": "Gamesmith: Casual Mini Game Builder",
+  "description_zh": "一人 + AI 做休闲小游戏（微信、抖音等小游戏平台，任意玩法）的完整流程，从立项到上线后运营分九个阶段，每阶段写清做什么、产出物、完成判据和常见坑：立项先查名称、商标、备案与网络类型；网页原型先调手感；玩法核心写成引擎无关代码，数值和内容进配置表并配校验脚本；关卡由片段组成，用求解器验收能否无伤通过、操作密度和时机窗口，用生成器从骨架派生新场景；美术用代码绘制烘焙图集；平台接入讲分包、首帧加载页、构建模板和真机报错；真机试玩按反馈、复现、最小修复、回归测试、证据闭环；上线前逐项清单。附可运行的配置校验、求解器、预览和同步脚本骨架。平台规则只写已核实的，未核实的标为待核实。",
+  "description_en": "A staged workflow for building casual mini games with AI, for WeChat, Douyin and similar platforms and any genre. Nine stages from kickoff to post-launch, each with what to do, deliverables, done criteria and common pitfalls: check the name, trademark, filing and network type first; tune feel in a web prototype; write the game rules as engine-free code with config tables and a validator; build levels from chunks, accept each chunk with a solver (clears unhurt, action density, timing windows) and derive new scenes from skeleton chunks with a generator; bake code-drawn art into atlases; handle subpackages, a first-frame loading screen, build templates and on-screen errors; run playtests as feedback, reproduce, minimal fix, regression test, evidence; and pass a launch checklist. Includes runnable skeletons for the validator, solver, preview and sync script. Platform facts are limited to verified ones; the rest are marked to verify.",
+  "examples_zh": [
+    "我想做一个微信小游戏，横版跑酷，帮我按阶段列出从立项到上线要做的事",
+    "帮我给关卡片段写一个求解器，验证每个片段都能无伤通过、操作不太稀也不太难",
+    "小游戏准备提审了，按上线清单帮我逐项检查还缺什么"
+  ],
+  "examples_en": [
+    "I want to make a WeChat mini game, a side-scrolling runner. List what to do in each stage from kickoff to launch",
+    "Write a solver for my level chunks that proves each one clears unhurt with a fair action density and timing window",
+    "My mini game is about to go to review. Walk through the launch checklist and tell me what is missing"
+  ],
+  "author": "Tealun",
+  "category": "developer"
+}

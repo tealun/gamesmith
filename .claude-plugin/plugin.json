@@ -1,0 +1,28 @@
+{
+  "name": "gamesmith",
+  "displayName": "Gamesmith",
+  "version": "1.0.0",
+  "description": "A staged workflow for building casual mini games (WeChat, Douyin and similar platforms): compliance first, feel prototype, engine-free core with config tables, level pipeline with a chunk solver and generator, code-drawn atlases, platform build, playtest loop, launch checklist and post-launch iteration. Ships runnable skeletons for the validator, solver and preview.",
+  "author": {
+    "name": "Tealun",
+    "url": "https://github.com/tealun"
+  },
+  "homepage": "https://github.com/tealun/gamesmith",
+  "repository": "https://github.com/tealun/gamesmith",
+  "documentationUrl": "https://github.com/tealun/gamesmith#readme",
+  "supportUrl": "https://github.com/tealun/gamesmith/issues",
+  "privacyPolicyUrl": "https://github.com/tealun/gamesmith/blob/main/PRIVACY.md",
+  "license": "MIT",
+  "keywords": [
+    "game-development",
+    "mini-game",
+    "wechat-mini-game",
+    "level-design",
+    "game-feel",
+    "launch-checklist"
+  ],
+  "icon": "./assets/gamesmith-icon.png",
+  "skills": [
+    "./gamesmith"
+  ]
+}

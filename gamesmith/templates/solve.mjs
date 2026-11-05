@@ -1,12 +1,19 @@
 #!/usr/bin/env node
 // Chunk solver (template): beam search over inputs on the REAL core to accept or reject every chunk.
-//   node tools/solve.mjs                 all chunks; exit 1 if one misses a line in config/solver.json
-//   node tools/solve.mjs <chunkId>       one chunk, with its input timeline and per-action timing windows
-//   node tools/solve.mjs 'demo_*'        every chunk with that prefix
+//   node solve.mjs                 all chunks; exit 1 if one misses a line in solver.json
+//   node solve.mjs <chunkId>       one chunk, with its input timeline and per-action timing windows
+//   node solve.mjs 'demo_*'        every chunk with that prefix
 // Lines: (1) clears without damage or wall bonks; (2) actions per second of the cheapest clear >= minActionsPerSec;
 // (3) the tightest timing window on the most forgiving clear >= minWindowMs.
 import { readFileSync, readdirSync } from 'node:fs';
-import { Sim, DT, buildConfig } from '../core/sim.mjs';
+import { Sim, DT, buildConfig } from './sim.mjs';
+
+/** Read the config tables that sit next to this file (chunk libraries are chunks_<scene>.json). */
+export function loadConfig(dir = new URL('./', import.meta.url).pathname) {
+  const r = f => JSON.parse(readFileSync(dir + f, 'utf8'));
+  return buildConfig({ player: r('player.json'), entities: r('entities.json'), levels: r('levels.json'), solver: r('solver.json'),
+    chunks: readdirSync(dir).filter(f => /^chunks_.*\.json$/.test(f)).sort().map(r) });
+}
 
 const STEPS = 6;                                   // one decision every 0.05 s
 const RELEASE = { tap: 11, hold: 24 };             // ~90 ms tap, ~200 ms hold (in simulation steps)
@@ -98,10 +105,7 @@ export function solveChunk(cfg, chunk, speed) {
 
 // ---------------- CLI ----------------
 if (import.meta.url === `file://${process.argv[1]}`) {
-  const D = new URL('../config/', import.meta.url).pathname;
-  const r = f => JSON.parse(readFileSync(D + f, 'utf8'));
-  const cfg = buildConfig({ player: r('player.json'), entities: r('entities.json'), levels: r('levels.json'), solver: r('solver.json'),
-    chunks: readdirSync(D + 'chunks').filter(f => f.endsWith('.json')).map(f => r('chunks/' + f)) });
+  const cfg = loadConfig();
   const only = process.argv[2], many = !!only && only.endsWith('*'), L = cfg.solver;
   let bad = 0, n = 0;
   for (const c of cfg.chunks) {

@@ -1,3 +1,4 @@
-preview_out/
+dist/
 __pycache__/
 node_modules/
+preview_out/

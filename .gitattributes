@@ -1,0 +1,5 @@
+# No line-ending conversion anywhere: every platform checks out exactly the bytes
+# stored here. The Claude plugin directory validates the repository as stored and
+# rejects attributes that rewrite content; scripts/build_plugin.py --check enforces
+# this (docs/claude-directory-rules.md).
+* -text

@@ -1,11 +1,6 @@
 ---
 name: gamesmith
-description: >-
-  通用休闲小游戏开发流程（立项合规 → 原型手感 → 配置驱动架构 → 关卡内容管线 → 美术管线 → 平台接入构建 → 真机试玩迭代 → 上线清单 → 上线后运营）。
-  当用户要做小游戏、微信小游戏、抖音小游戏、休闲游戏、H5 小游戏，或涉及跑酷/闯关/无尽模式、关卡设计、片段求解器、关卡生成器、
-  图集烘焙、分包与包体、Cocos Creator 小游戏构建、真机调试、备案提审、上线清单、健康游戏忠告、适龄提示、埋点、赛季规划时使用。
-  English triggers: mini game, WeChat mini game, Douyin mini game, casual game, hyper-casual, runner / endless runner,
-  level design, level generator, chunk solver, sprite atlas, game feel, playtest, game launch checklist, Cocos Creator.
+description: "通用休闲小游戏开发流程（立项合规 → 原型手感 → 配置驱动架构 → 关卡内容管线 → 美术管线 → 平台接入构建 → 真机试玩迭代 → 上线清单 → 上线后运营）。 当用户要做小游戏、微信小游戏、抖音小游戏、休闲游戏、H5 小游戏，或涉及跑酷/闯关/无尽模式、关卡设计、片段求解器、关卡生成器、 图集烘焙、分包与包体、Cocos Creator 小游戏构建、真机调试、备案提审、上线清单、健康游戏忠告、适龄提示、埋点、赛季规划时使用。 English triggers: mini game, WeChat mini game, Douyin mini game, casual game, hyper-casual, runner / endless runner, level design, level generator, chunk solver, sprite atlas, game feel, playtest, game launch checklist, Cocos Creator."
 ---
 
 # gamesmith：休闲小游戏开发技能
