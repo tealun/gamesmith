@@ -10,7 +10,8 @@ remote=${3:-origin}
 version=$(python3 -c "import json,sys; print(json.load(open(sys.argv[1]))['version'])" "$src/.claude-plugin/plugin.json")
 source_sha=$(git rev-parse --short HEAD)
 work=$(mktemp -d)
-trap 'git worktree remove --force "$work" >/dev/null 2>&1 || true' EXIT
+# the first publish builds the branch on a temporary local branch; remove both on exit so a later run starts clean
+trap 'git worktree remove --force "$work" >/dev/null 2>&1 || true; git branch -D "publish-$branch" >/dev/null 2>&1 || true' EXIT
 
 git config user.name >/dev/null || git config user.name "github-actions[bot]"
 git config user.email >/dev/null || git config user.email "41898282+github-actions[bot]@users.noreply.github.com"

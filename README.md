@@ -6,7 +6,7 @@
 
 ## 它帮你做什么
 
-技能入口 `gamesmith/SKILL.md` 把开发分成九个阶段，每个阶段写清做什么、产出物、完成判据和常见坑：
+技能入口 `SKILL.md` 把开发分成九个阶段，每个阶段写清做什么、产出物、完成判据和常见坑：
 
 | 阶段 | 要点 |
 | --- | --- |
@@ -20,7 +20,7 @@
 | 上线清单 | 资质、合规、构建、开关、质量、数据、提审材料逐项勾选 |
 | 上线后 | 指标阈值、片段死亡率排行、分批或限时开放内容、赛季规划 |
 
-`gamesmith/references/` 是各主题的检查表；`gamesmith/templates/` 是可运行的最小骨架（玩具跑酷）：配置表与校验脚本、片段求解器、无引擎预览、同步脚本、规则测试。平台事实（审核规则、包体上限、接口能力）只写已核实或实测过的，并注明以官方文档为准；没核实的标为「待核实」。
+技能目录里的 `references/` 是各主题的检查表，`templates/` 是可运行的最小骨架（玩具跑酷）：配置表与校验脚本、片段求解器、无引擎预览、同步脚本、规则测试。平台事实（审核规则、包体上限、接口能力）只写已核实或实测过的，并注明以官方文档为准；没核实的标为「待核实」。
 
 ## 安装
 
@@ -54,7 +54,7 @@
 
 ## 隐私
 
-技能只是一组说明和骨架代码，不收集、不发送任何数据，见 [PRIVACY.md](PRIVACY.md)。骨架脚本只在你自己的项目里由你或 Claude 运行，只读写本地文件。
+技能只是一组说明和骨架代码，不收集、不发送任何数据，见 [隐私政策](https://github.com/tealun/gamesmith/blob/main/PRIVACY.md)。骨架脚本只在你自己的项目里由你或 Claude 运行，只读写本地文件。
 
 ## 许可
 
@@ -64,7 +64,7 @@
 
 ## English
 
-Gamesmith is a skill for building casual mini games with AI, for WeChat, Douyin and similar platforms and any genre. It splits the work into nine stages, from kickoff and compliance to post-launch iteration, and for each stage states what to do, the deliverables, the done criteria and the common pitfalls. Topic checklists live in `gamesmith/references/`; `gamesmith/templates/` holds runnable skeletons: config tables with a validator, a chunk solver that proves each level chunk clears unhurt with a fair action density and timing window, an engine-free preview, a sync script and rule tests. Platform facts are limited to ones verified against official documentation or on a real device; everything else is marked to verify.
+Gamesmith is a skill for building casual mini games with AI, for WeChat, Douyin and similar platforms and any genre. It splits the work into nine stages, from kickoff and compliance to post-launch iteration, and for each stage states what to do, the deliverables, the done criteria and the common pitfalls. Inside the skill folder, `references/` holds topic checklists and `templates/` holds runnable skeletons: config tables with a validator, a chunk solver that proves each level chunk clears unhurt with a fair action density and timing window, an engine-free preview, a sync script and rule tests. Platform facts are limited to ones verified against official documentation or on a real device; everything else is marked to verify.
 
 Install in Claude Code from the tealun marketplace:
 
@@ -73,4 +73,4 @@ Install in Claude Code from the tealun marketplace:
 /plugin install gamesmith@tealun
 ```
 
-On claude.ai, download `gamesmith-<version>.zip` from the latest Release and upload it under Customize > Plugins > Add > Upload plugin. For other agent tools, copy `skills/gamesmith` from that zip into the tool's skills folder. For WorkBuddy, upload `gamesmith-workbuddy.zip`. The skill collects and sends no data ([PRIVACY.md](PRIVACY.md)). License: [MIT](LICENSE).
+On claude.ai, download `gamesmith-<version>.zip` from the latest Release and upload it under Customize > Plugins > Add > Upload plugin. For other agent tools, copy `skills/gamesmith` from that zip into the tool's skills folder. For WorkBuddy, upload `gamesmith-workbuddy.zip`. The skill collects and sends no data ([privacy policy](https://github.com/tealun/gamesmith/blob/main/PRIVACY.md)). License: [MIT](LICENSE).

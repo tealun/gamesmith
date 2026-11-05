@@ -4,7 +4,7 @@
 
 ## 1. 包体与分包
 
-已核实（微信官方「分包加载」文档，2026-04 版本）：
+已核实（[分包加载](https://developers.weixin.qq.com/minigame/dev/guide/base-ability/subPackage/useSubPackage.html)，页面最后编辑 2026-04-09）：
 
 | 项 | 上限 |
 |---|---|
@@ -72,7 +72,7 @@
 ## 8. 横屏安全区
 
 - 胶囊位置：`wx.getMenuButtonBoundingClientRect()`（屏幕左上角为原点）。
-- `wx.getWindowInfo().safeArea` 按**竖屏正方向**给出且部分机型缺失，横屏须自行换算并兜底（已核实）。
+- `wx.getWindowInfo().safeArea` 按**竖屏正方向**给出且部分机型缺失，横屏须自行换算并兜底（已核实：[wx.getWindowInfo](https://developers.weixin.qq.com/minigame/dev/api/base/system/wx.getWindowInfo.html)）。
 - 实测示例（模拟器 iPhone 12/13 横屏）：胶囊 L746 T12 R834 B44，窗口 844×390；真机与刘海机型**待测**。
 - 启动组件把测量值显示在屏幕角落，测试者截图即可回传。HUD、按钮、触控分区避开胶囊与刘海。
 
@@ -91,7 +91,7 @@
 
 ## 10. 分享
 
-已核实（微信官方文档）：
+已核实（[开放数据域基础能力](https://developers.weixin.qq.com/minigame/dev/guide/open-ability/opendata/basic.html)，最后编辑 2026-04-09；[wx.shareAppMessage](https://developers.weixin.qq.com/minigame/dev/api/share/wx.shareAppMessage.html)）：
 - 分享卡 `query` 为 `k1=v1&k2=v2`，接收方用 `wx.getLaunchOptionsSync()` / `wx.onShow()` 读取；分享图比例 **5:4**。
 - 好友排行用开放数据域（主域可发消息给开放数据域，反向不行）；群排行 `wx.getGroupCloudStorage` 只能在从群分享卡片打开时、在开放数据域内调用，需授权。使用关系链须做隐私指引与授权弹窗（见 `compliance.md`）。
 - 诱导分享禁令见 `compliance.md`。

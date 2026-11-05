@@ -30,7 +30,7 @@
 | D4 | WorkBuddy 的展示字段（`display_name`、`display_name_en`、`description_zh`、`description_en`、`examples_zh`、`examples_en`、`author`、`category`）放在 `workbuddy/frontmatter.json`，打包时合并进包内 `SKILL.md`；写出时每个值都是 JSON 引号字符串，保证是合法 YAML | Claude 用的 `SKILL.md` 保持干净，不带别的平台的字段 |
 | D5 | 包名：插件包 `gamesmith-<版本>.plugin` / `.zip`；WorkBuddy 包 `gamesmith-workbuddy.zip`（另有 `-flat.zip` 备用），都只在 `dist/` 生成，由 `release.yml` 附到 Release | 规则 4：仓库不提交安装包 |
 | D6 | 许可证 MIT | 与 dev-pdca 一致；插件目录要求有 LICENSE。**用户可改**，改了要同步 `plugin.json` 的 `license` |
-| D7 | 插件目录、tealun 市场都跟踪 `plugin` 分支，由 `plugin-branch.yml` 在推 tag 时写入 | EV-20261105-003 |
+| D7 | 插件目录、tealun 市场都跟踪 `plugin` 分支，由 `release.yml` 的 `plugin-branch` 作业在发布检查全部通过后写入（2026-11-05 审计 F1：原先的独立 workflow 与 release 并行，不受 release 检查约束）；`plugin-branch.yml` 只用于从已有 Release 的 tag 手动补写 | EV-20261105-003 |
 | D8 | `.gitattributes` 为 `* -text` | EV-20261105-002 |
 | D9 | `docs/claude-directory-rules.md`、`docs/workbuddy-rules.md` 逐条登记规则；每条对应 `build_plugin.py --check` / `build_suite.py --check` 的一项检查，或写明不校验的原因 | EV-20261102-001、-003 |
 | D10 | 图标用代码绘制，`scripts/make_icon.mjs` 生成 512×512 PNG 到 `assets/`（只在需要换图标时运行） | 目录读取 `icon` 作为上架图标；本技能本身就推荐代码绘制美术 |
@@ -53,7 +53,7 @@
 | V2 | WorkBuddy 能否解析并通过审核；`name` 是否与平台已有技能重名 | 上传结果截图 | Tealun |
 | V3 | claude.ai 上传 Release 里的 zip 能否安装 | 截图 | Tealun |
 | V4 | `templates/` 里的脚本是否让目录转人工审核或报出 hold | 门户报出项原文 | Tealun；被报出后先登记规则再处理 |
-| V5 | 首次推 tag 后 `release.yml` 与 `plugin-branch.yml` 是否全绿 | Actions 运行结果 | AI |
+| V5 | 首次推 tag 后 `release.yml` 的两个作业是否全绿 | Actions 运行结果 | AI |
 
 ## 阶段门槛
 

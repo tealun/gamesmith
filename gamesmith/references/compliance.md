@@ -68,6 +68,8 @@
 | 防沉迷 | 不开通虚拟支付时平台统一接入 | …/guide/zxbsm.html |
 | 适龄 | 8+/12+/16+ 后台选择 | …/guide/slts.html |
 | 隐私 | 见第 4 节 | …/guide/privacy.html |
+| 健康游戏忠告 | 游戏开始前须在显著位置全文登载 | 小游戏运营规范 3.2.6，developers.weixin.qq.com/minigame/product/（2026-09-04） |
+| 诱导分享 | 见第 4 节 | 小游戏运营规范 2.5.1、2.5.28、3.2.9，同上页面（2026-09-04） |
 | 包体 | 见 `platform-wechat-cocos.md` | …/subPackage/useSubPackage.html |
 
 ## 7. 待核实清单的做法

@@ -2,8 +2,8 @@
 """Check and build the Claude plugin package gamesmith-<version>.plugin.
 
 .claude-plugin/plugin.json lists the skill folder (./gamesmith). The plugin directory and the
-tealun marketplace track the `plugin` branch, which plugin-branch.yml fills with the built
-package only. This script packs it the standard way:
+tealun marketplace track the `plugin` branch, which release.yml (job plugin-branch, after every
+release check passes) fills with the built package only. This script packs it the standard way:
 
     .claude-plugin/plugin.json   skills rewritten to ./skills/<name>
     skills/<name>/...            each skill folder, minus release notes and agents/
@@ -59,7 +59,9 @@ MAX_FILE_BYTES = 5 * 1024 * 1024          # stops validation
 MAX_TEXT_FILE_BYTES = 256 * 1024          # held for a reviewer (images and fonts exempt)
 MAX_FILES = 512                           # held for a reviewer
 MEDIA_SUFFIXES = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg", ".woff", ".woff2", ".ttf", ".otf"}
-HELD_SUFFIXES = {".ico", ".pdf", ".exe", ".dll", ".so", ".dylib", ".jar", ".tar", ".gz", ".7z"}
+# Only text, SVG, PNG, JPEG, GIF, WebP and fonts pass without a reviewer; anything else is held (a whitelist, so
+# audio, .wasm or .ico files raise a warning too).
+TEXT_SUFFIXES = {".md", ".txt", ".json", ".py", ".mjs", ".js", ".ts", ".yml", ".yaml", ".sh", ".html", ".css", ".csv", ""}
 JUNK_NAMES = {".DS_Store", "Thumbs.db", "desktop.ini", "__MACOSX"}
 # Install packages are built by release.yml and attached to the Release; committing one would also hold the
 # plugin for a reviewer (docs/claude-directory-rules.md). A marketplace.json here would clash with the
@@ -159,6 +161,12 @@ def check(repo: Path = REPO, tag: str | None = None, since: str | None = None) -
             if DOWNLOAD_AND_RUN.search(line):
                 errors.append(f"README.md line {n}: download-and-run install step; the directory shows it "
                               f"to users as an install-time risk")
+        # the README ships inside the plugin package, where only README.md, LICENSE and the icon sit beside it:
+        # a relative link to anything else (PRIVACY.md, docs/...) is dead there
+        packaged = {"README.md", "LICENSE", (manifest.get("icon") or "").lstrip("./")}
+        for target in re.findall(r"\]\(([^)#]+)(?:#[^)]*)?\)", readme.read_text(encoding="utf-8")):
+            if not re.match(r"[a-z]+:", target) and target.lstrip("./") not in packaged:
+                errors.append(f"README.md links to {target}, which is not in the plugin package; use an absolute URL")
     if not (repo / "LICENSE").is_file() and not manifest.get("license"):
         errors.append("no LICENSE file and no license in plugin.json")
     for missing in ("description", "author", "version"):
@@ -278,8 +286,8 @@ def directory_warnings(repo: Path = REPO) -> list[str]:
         rel = f.relative_to(repo)
         if f.name in JUNK_NAMES:
             warnings.append(f"{rel}: remove OS junk files")
-        elif f.suffix.lower() in HELD_SUFFIXES:
-            warnings.append(f"{rel}: {f.suffix} files are held for a reviewer")
+        elif f.suffix.lower() not in TEXT_SUFFIXES | MEDIA_SUFFIXES and f.name not in {"LICENSE", ".gitignore", ".gitattributes"}:
+            warnings.append(f"{rel}: {f.suffix or 'binary'} files are held for a reviewer (only text, images and fonts pass)")
         elif f.suffix.lower() not in MEDIA_SUFFIXES and f.is_file() and f.stat().st_size > MAX_TEXT_FILE_BYTES:
             warnings.append(f"{rel}: over 256 KiB is held for a reviewer")
     return warnings

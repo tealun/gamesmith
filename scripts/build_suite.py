@@ -100,7 +100,9 @@ def package_frontmatter() -> dict:
     src, _ = split_frontmatter((SKILL_DIR / "SKILL.md").read_text(encoding="utf-8"))
     fm = parse_frontmatter(src)
     extra = {k: v for k, v in json.loads(WORKBUDDY_FIELDS.read_text(encoding="utf-8")).items() if not k.startswith("_")}
-    return {"name": fm.get("name"), "description": fm.get("description"), **extra, "version": version()}
+    # WorkBuddy uses `description` for its list and recall and expects it to equal description_zh
+    # (docs/workbuddy-rules.md); Claude keeps the bilingual trigger description in gamesmith/SKILL.md
+    return {"name": fm.get("name"), "description": extra.get("description_zh"), **extra, "version": version()}
 
 
 def render_frontmatter(fields: dict) -> str:
@@ -126,6 +128,15 @@ def validate() -> str:
         errors.append(f"name must be {NAME!r}, got {fm.get('name')!r}")
     if not NAME_PATTERN.fullmatch(fm.get("name") or ""):
         errors.append("name must match ^[a-z0-9][a-z0-9-]{0,39}$")
+    if (fm.get("name") or "").startswith("workbuddy-"):
+        errors.append("name must not start with workbuddy- (reported as reserved by the platform)")
+    if fm.get("description") != fm.get("description_zh"):
+        errors.append("package description must equal description_zh")
+    if re.search(r"\s", fm.get("display_name") or ""):
+        errors.append("display_name must not contain spaces (a paid listing rejects them; keep it valid from the start)")
+    src_desc = src_fields.get("description") or ""
+    if not 1 <= len(src_desc) <= DESCRIPTION_LIMIT:
+        errors.append(f"gamesmith/SKILL.md description is {len(src_desc)} chars, limit {DESCRIPTION_LIMIT}")
     desc = fm.get("description") or ""
     if not 1 <= len(desc) <= DESCRIPTION_LIMIT:
         errors.append(f"description is {len(desc)} chars, limit {DESCRIPTION_LIMIT}")

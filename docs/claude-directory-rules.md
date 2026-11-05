@@ -2,7 +2,7 @@
 
 提交 Claude 插件目录前要满足的已知规则，以及每条规则由什么检查。新增规则时，先在这里加一行，再补校验；能写成本地检查的就写进 `scripts/build_plugin.py --check`，写不了的要注明原因。
 
-插件目录跟踪 `plugin` 分支（只由 `.github/workflows/plugin-branch.yml` 写入），插件路径留空：目录读取的是打包产物，不是 main 上的开发文件。`build_plugin.py --check` 仍对 main 的被跟踪文件做同样的检查，这样分支内容与仓库都不会违规。照搬自 tealun/tealun-dev-pdca 的同名表（2026-11-05 读取），来源一栏沿用该表的核对结果。
+插件目录跟踪 `plugin` 分支（只由 CI 写入：`release.yml` 的 `plugin-branch` 作业在发布检查通过后写入，`plugin-branch.yml` 只能从已有 Release 的 tag 手动补写），插件路径留空：目录读取的是打包产物，不是 main 上的开发文件。`build_plugin.py --check` 仍对 main 的被跟踪文件做同样的检查，这样分支内容与仓库都不会违规。照搬自 tealun/tealun-dev-pdca 的同名表（2026-11-05 读取），来源一栏沿用该表的核对结果。
 
 **来源**（tealun-dev-pdca 于 2026-11-04 读取，本表 2026-11-05 照搬）：
 - **提交**：[Submit a plugin](https://claude.com/docs/plugins/submit)
@@ -10,7 +10,7 @@
 - **构建**：[Build a plugin](https://claude.com/docs/plugins/build.md)
 - **参考**：[Plugins reference](https://code.claude.com/docs/en/plugins-reference)
 - **CLI**：`claude plugin validate`（2.1.318）的实际输出
-- **方案**：Claude Docs《Tealun-Skills 插件发布规范化方案》的转述；以上官方页面里找不到原文
+- **方案**：维护者整理的发布方案里的说法，以上官方页面里找不到原文
 
 **检查级别**：
 - **阻断**：`--check` 报错，CI 失败；
@@ -56,7 +56,7 @@
 | 仓库导出（git archive）的内容必须和仓库存储的完全一致：`.gitattributes` 里不能有 `export-ignore`、`filter`（包括 LFS）或会改动换行的 `eol` 规则，也不能有 Git replace refs；文件名不能含冒号或反斜杠、不能以点或空格结尾、不能是 Windows 设备名、不能有只差大小写的同名文件 | 实测（2026-11-05 门户 Validate 报错原文） | 阻断：`content_rewriting_attributes()` 不允许 `.gitattributes` 出现任何会改写内容的属性（第一次只去掉 `eol=crlf`，Validate 仍报错；改为 `* -text` 后再验证）；`export_mismatches()` 导出索引后逐个比对；文件名规则目前没有触发，暂不单独校验 |
 | 图片和字体以外的文件超过 256 KiB，转人工审核 | 清单 | 提示：`directory_warnings()` |
 | 文件超过 512 个，转人工审核 | 清单 | 提示：`directory_warnings()` |
-| 只允许文本、SVG、PNG、JPEG、GIF、WebP 和字体；其他二进制文件（如 `.zip`、`.ico`、`.pdf`）转人工审核 | 清单 | `.zip`、`.plugin`：阻断（`FORBIDDEN_SUFFIXES`，安装包只由 `release.yml` 构建）；其他：提示（`directory_warnings()`） |
+| 只允许文本、SVG、PNG、JPEG、GIF、WebP 和字体；其他二进制文件（如 `.zip`、`.ico`、`.pdf`）转人工审核 | 清单 | `.zip`、`.plugin`：阻断（`FORBIDDEN_SUFFIXES`，安装包只由 `release.yml` 构建）；其他不在白名单（`TEXT_SUFFIXES` 与 `MEDIA_SUFFIXES`）里的文件：提示（`directory_warnings()`），例如 `.mp3`、`.wasm`、`.ico` |
 | 删掉 `.DS_Store`、`Thumbs.db`、`desktop.ini`、`__MACOSX` | 清单 | 提示：`directory_warnings()` |
 | 包启动器要固定版本（如 `npx pkg@1.2.3`），`@latest` 和不固定的版本范围会被拦下 | 清单 | 不校验：插件本身不调用启动器。CI 里的 `npx -y @anthropic-ai/claude-code@2.1.318` 已固定版本，且 CI 不进入 `plugin` 分支 |
 | 凭据不能写死在代码里 | 清单 | 不校验：插件不需要任何凭据 |
@@ -73,7 +73,7 @@
 
 ## 扫描范围
 
-目录会把插件文件夹里的所有文件都当成插件来扫描。dev-pdca 曾因插件文件夹等于仓库根目录，被报出 6 个 policy hold（CI 里的凭据、脚本与测试、下载后直接执行的命令、根目录的 `CLAUDE.md`，见其台账 EV-20261105-003）。本仓库从一开始就让目录跟踪 `plugin` 分支：`plugin-branch.yml` 在推 tag 时把 `dist/gamesmith/`（技能、`plugin.json`、README、LICENSE、图标）追加提交到这个分支。
+目录会把插件文件夹里的所有文件都当成插件来扫描。dev-pdca 曾因插件文件夹等于仓库根目录，被报出 6 个 policy hold（CI 里的凭据、脚本与测试、下载后直接执行的命令、根目录的 `CLAUDE.md`，见其台账 EV-20261105-003）。本仓库从一开始就让目录跟踪 `plugin` 分支：`release.yml` 的 `plugin-branch` 作业在发布检查全部通过后把 `dist/gamesmith/`（技能、`plugin.json`、README、LICENSE、图标）追加提交到这个分支。
 
 ## 继承的防线（来自 tealun-dev-pdca 演进台账）
 

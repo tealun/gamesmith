@@ -1,6 +1,8 @@
 name: release
 
 # Publishing happens only by pushing a v<version> tag; the tag must equal plugin.json's version.
+# Job `release` runs every check and creates the GitHub Release; only when it succeeds does job `plugin-branch`
+# write the built plugin to the `plugin` branch, which the plugin directory and the tealun marketplace track.
 on:
   push:
     tags: ["v*"]
@@ -18,6 +20,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: PyYAML for the WorkBuddy frontmatter read-back
+        run: python3 -m pip install --quiet pyyaml==6.0.2
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
@@ -57,3 +61,26 @@ jobs:
             "dist/gamesmith-workbuddy-${version}-flat.zip" \
             --title "Gamesmith ${version}" \
             --notes-file "$RUNNER_TEMP/notes.md"
+
+  plugin-branch:
+    needs: release
+    runs-on: ubuntu-latest
+    concurrency:
+      group: plugin-branch
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: build the plugin
+        run: python3 scripts/build_plugin.py
+      - name: validate the built plugin with the Claude Code CLI
+        run: npx -y @anthropic-ai/claude-code@2.1.318 plugin validate dist/gamesmith/.claude-plugin/plugin.json
+      - name: commit the built plugin to the plugin branch
+        run: scripts/publish_plugin_branch.sh dist/gamesmith plugin

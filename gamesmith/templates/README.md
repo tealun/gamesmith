@@ -9,7 +9,7 @@
 | `validate_config.py` | 配置校验：schema、id 唯一、引用、取值范围、网格、安全区、「危险物须立在从地面升起的方块上」、教学节奏（每关新内容 ≤ 2）、存档点、验收线完整、可选构建模板 AppID | `tools/` |
 | `solve.mjs` | 片段求解器：束搜索证明可无伤通过（撞墙也算失误）、操作密度、每个操作的时机窗口；全量/单片段/前缀通配。也导出 `loadConfig()` | `game/tools/` |
 | `preview.mjs` | 无引擎预览：无头浏览器画出片段与求解路线并截图（需要本机已装 Playwright 和 Chromium） | `tools/`；真实项目应换成打包后的画面层 |
-| `sync_to_engine.py` | 把核心与配置复制进引擎工程（生成头、保留 `.meta`、清理已删除配置），按 Cocos 目录布局 | `tools/`；路径按你的引擎调整 |
+| `sync_to_engine.py` | 把核心与配置复制进引擎工程（生成头、保留 `.meta`；源里删掉的片段库连同 `.meta` 一起删，配置目录里的其他文件不动），按 Cocos 目录布局 | `tools/`；路径按你的引擎调整 |
 | `core.test.mjs` | 规则测试 + 求解器测试 + 「禁止展开 Set/Map」源码扫描 | `game/test/` |
 
 在本目录运行：

@@ -1,14 +1,15 @@
-name: plugin branch
+name: plugin branch (refill)
 
-# The Claude plugin directory and the tealun marketplace track the `plugin` branch, which holds only the built
-# plugin (skill, plugin.json, README, LICENSE, icon) and none of the repository's tooling. This workflow is the
-# only writer of that branch: on a release tag, or by hand (workflow_dispatch) from main to fill or refresh it.
-# See docs/88_planning/plugin-release-20261105.md.
+# The `plugin` branch is written by job `plugin-branch` in release.yml after a tag passes every release check.
+# This workflow only refills it by hand from an existing release tag (for example after the branch was deleted):
+# it checks out that tag, runs the tag checks again, and writes the same built plugin. It never publishes main.
 
 on:
-  push:
-    tags: ["v*"]
   workflow_dispatch:
+    inputs:
+      tag:
+        description: "existing release tag, e.g. v1.0.0"
+        required: true
 
 permissions:
   contents: write
@@ -19,12 +20,11 @@ concurrency:
 
 jobs:
   publish:
-    # only released or main content may reach the plugin branch, never a feature branch
-    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: refs/tags/${{ inputs.tag }}
           fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
@@ -32,8 +32,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
-      - name: plugin checks
-        run: python3 scripts/build_plugin.py --check
+      - name: the tag has a GitHub Release (only released versions reach the plugin branch)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release view "${{ inputs.tag }}" --repo "$GITHUB_REPOSITORY" > /dev/null
+      - name: plugin checks for this tag
+        run: python3 scripts/build_plugin.py --check --tag "${{ inputs.tag }}"
       - name: build the plugin
         run: python3 scripts/build_plugin.py
       - name: validate the built plugin with the Claude Code CLI

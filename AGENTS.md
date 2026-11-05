@@ -14,7 +14,7 @@
 
 ## 本仓库的硬规则
 
-- **发布到外部平台之前，先查清它的全部规则。** 字段、长度、数量、目录结构等要求逐条登记到对照表（Claude 插件目录见 `docs/claude-directory-rules.md`，WorkBuddy 见 `docs/workbuddy-rules.md`），每条要么写进 `scripts/build_plugin.py --check` 或 `scripts/build_suite.py --check`，要么写明不校验的原因；本地通过后再上传。不要用平台的报错来逐条试规则，也不要只挑带数字的规则做校验。平台报出的新项，先登记进对照表再处理。
+- **发布到外部平台之前，先查清它的全部规则。** 字段、长度、数量、目录结构等要求逐条登记到对照表（Claude 插件目录见 `docs/claude-directory-rules.md`，WorkBuddy 见 `docs/workbuddy-rules.md`），每条要么写进 `scripts/build_plugin.py --check` 或 `scripts/build_suite.py --check`，要么写明不校验的原因；本地通过后再上传。不要用平台的报错来逐条试规则，也不要只挑带数字的规则做校验。平台报出的新项，先登记进对照表再处理。照搬别的仓库的规则表时，回到原始来源逐条核对，并在表头写明核对日期，不能只核对抄来的表本身。
 - **改了 `gamesmith/` 里的任何文件，** 运行下面的检查，全部通过才提交：
   - `python3 scripts/build_plugin.py --check`
   - `python3 scripts/build_suite.py --check`
@@ -23,7 +23,7 @@
   - 在 `gamesmith/templates/` 下：`python3 validate_config.py`、`node --test core.test.mjs`、`node solve.mjs`
 - **版本以 `.claude-plugin/plugin.json` 为唯一来源。** `SKILL.md` 不写 `version`（WorkBuddy 包的版本由 `build_suite.py` 从 `plugin.json` 注入）。改了 `gamesmith/` 就升版本，并在 `CHANGELOG.md` 加一节 `## gamesmith <版本>`。升法：删掉阶段、改变技能名或触发范围的大改升 major；新增阶段、参考文件或骨架脚本升 minor；其余（修正文字、补充条目、修骨架的 bug）升 patch。CI 用 `build_plugin.py --check --since <上一个 tag>` 拦截没升版本的改动。
 - **发布只靠推送 `v<版本>` tag，** 由 `.github/workflows/release.yml` 构建并创建 Release，附上 `gamesmith-<版本>.plugin`、`.zip`、`gamesmith-workbuddy.zip` 和 flat 包。不手动上传 Release 附件，不把 `.zip`、`.plugin` 提交进仓库（`build_plugin.py --check` 会阻断）。
-- **`plugin` 分支只由 `.github/workflows/plugin-branch.yml` 写入，** 插件目录和 tealun 市场都跟踪这个分支。它只包含打包好的插件（技能、`plugin.json`、README、LICENSE、图标），不要手动往里提交，也不要把开发文件（CI、脚本、测试、文档、`CLAUDE.md`）放进去。
+- **`plugin` 分支只由 CI 写入：** `release.yml` 的 `plugin-branch` 作业在全部发布检查通过、Release 建好之后写入；`plugin-branch.yml` 只用于从已有的 Release tag 手动补写，不发布 main。 插件目录和 tealun 市场都跟踪这个分支。它只包含打包好的插件（技能、`plugin.json`、README、LICENSE、图标），不要手动往里提交，也不要把开发文件（CI、脚本、测试、文档、`CLAUDE.md`）放进去。
 - **`.gitattributes` 保持 `* -text`。** 任何会改写内容的属性（`text`、`eol`、`filter`、`export-ignore` 等）都会让插件目录的 Validate 因导出内容和存储内容不一致而失败；`build_plugin.py --check` 会阻断。
 - **README 里不写下载后直接执行的命令**（`curl | sh`、`git clone` 后运行脚本、`npx` 等）。安装说明只用插件市场命令、Release 下载和复制文件夹；`build_plugin.py --check` 会阻断。
 - **本仓库不放 `marketplace.json`。** 市场清单在 `tealun/tealun-plugins`：新插件在那里加一条（`source` 为 `{"source":"github","repo":"tealun/gamesmith","ref":"plugin"}`），README 插件表加一行。两份同名的 `tealun` 市场会冲突。

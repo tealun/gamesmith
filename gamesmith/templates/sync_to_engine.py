@@ -7,8 +7,9 @@
 - CONFIG_FILES + chunks_*.json      -> <project>/assets/pack/config/            (a custom bundle, loaded after the first
                                                                               frame draws a loading screen)
 
-Engine .meta files next to the copies are kept (their uuids are committed with the project). Copies whose source
-was deleted are removed together with their .meta. In a real project the core lives in its own folder (game/core)
+Engine .meta files next to the copies are kept (their uuids are committed with the project). A chunk library
+(chunks_*.json) whose source was deleted is removed together with its .meta; other files in the config folder are
+left alone, so tables you keep only in the engine project are never touched. In a real project the core lives in its own folder (game/core)
 and the tables in config/: point SRC_CORE / SRC_CONFIG there and adapt the import rewrite to your engine.
 """
 import pathlib
@@ -45,7 +46,7 @@ for name in CORE_FILES:
 # config: copy file by file, keep .meta, remove configs that no longer exist
 cfg_out = project / "assets/pack/config"
 names = set(CONFIG_FILES) | {p.name for p in SRC_CONFIG.glob("chunks_*.json")}
-for old in list(cfg_out.glob("*.json")) if cfg_out.exists() else []:
+for old in list(cfg_out.glob("chunks_*.json")) if cfg_out.exists() else []:   # only copies this script made
     if old.name not in names:
         old.unlink()
         meta = old.with_name(old.name + ".meta")

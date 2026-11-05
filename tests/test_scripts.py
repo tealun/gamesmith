@@ -1,5 +1,6 @@
-"""Unit tests for the release scripts: every rule in docs/claude-directory-rules.md and docs/workbuddy-rules.md
-that has a local check gets a test that breaks a copy of the repository and expects that check to fail.
+"""Unit tests for the release scripts: rules in docs/claude-directory-rules.md and docs/workbuddy-rules.md that have
+a local check get a test that breaks a copy of the repository and expects that check to fail (not every check has
+one yet: symlinks and the 5 MiB limit are covered only by the code).
 
 Run: python3 -m unittest discover -s tests
 """
@@ -106,6 +107,34 @@ class PluginChecks(unittest.TestCase):
                 commit(root)
             self.assertEqual(build_plugin.check(root), [])
 
+    def test_readme_relative_links_must_be_in_the_package(self):
+        with RepoCopy() as root:
+            with (root / "README.md").open("a", encoding="utf-8") as f:
+                f.write("\n见 [隐私](PRIVACY.md)\n")
+            self.assertTrue(any("not in the plugin package" in e for e in build_plugin.check(root)))
+
+    def test_manifest_and_folder_rules(self):
+        with RepoCopy() as root:
+            path = root / ".claude-plugin/plugin.json"
+            good = json.loads(path.read_text(encoding="utf-8"))
+            for change, needle in (({"name": "claude-tools"}, "naming rules"), ({"name": "Game Smith"}, "naming rules"),
+                                   ({"icon": "./assets/missing.png"}, "does not exist"), ({"description": ""}, "description")):
+                path.write_text(json.dumps({**good, **change}), encoding="utf-8")
+                self.assertTrue(any(needle in e for e in build_plugin.check(root)), change)
+            path.write_text(json.dumps(good), encoding="utf-8")
+            (root / "README.md").write_text("# Gamesmith\n\nshort\n", encoding="utf-8")
+            self.assertTrue(any("words outside code blocks" in e for e in build_plugin.check(root)))
+
+    def test_whitelist_warns_on_other_binaries(self):
+        with RepoCopy() as root:
+            for rel in ("gamesmith/templates/jump.mp3", "gamesmith/templates/core.wasm"):
+                (root / rel).write_bytes(b"\0")
+            commit(root)
+            warned = " ".join(build_plugin.directory_warnings(root))
+            self.assertIn("jump.mp3", warned)
+            self.assertIn("core.wasm", warned)
+            self.assertNotIn("gamesmith-icon.png", warned)
+
     def test_skills_only(self):
         with RepoCopy() as root:
             manifest = json.loads((root / ".claude-plugin/plugin.json").read_text(encoding="utf-8"))
@@ -185,6 +214,9 @@ class WorkBuddyChecks(unittest.TestCase):
         self.assertIn("display_name_en", self._broken(lambda r: self._fields(r, display_name_en="x" * 61)))
         self.assertIn("display_name", self._broken(lambda r: self._fields(r, display_name=None)))
 
+    def test_platform_conventions(self):
+        self.assertIn("spaces", self._broken(lambda r: self._fields(r, display_name="小游戏 开发")))
+
     def test_structure(self):
         def deep(r: Path):
             (r / "gamesmith/templates/sub").mkdir()
@@ -235,6 +267,19 @@ class Builds(unittest.TestCase):
 
 
 class Templates(unittest.TestCase):
+    def test_sync_leaves_files_it_did_not_make(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            proj = Path(tmp)
+            cfg = proj / "assets/pack/config"
+            cfg.mkdir(parents=True)
+            for name in ("shop_items.json", "shop_items.json.meta", "chunks_gone.json", "chunks_gone.json.meta"):
+                (cfg / name).write_text("{}", encoding="utf-8")
+            subprocess.run([sys.executable, str(REPO / "gamesmith/templates/sync_to_engine.py"), str(proj)],
+                           capture_output=True, check=True)
+            self.assertTrue((cfg / "shop_items.json").exists() and (cfg / "shop_items.json.meta").exists())
+            self.assertFalse((cfg / "chunks_gone.json").exists() or (cfg / "chunks_gone.json.meta").exists())
+            self.assertTrue((cfg / "chunks_demo.json").exists())
+
     def test_templates_make_no_network_requests(self):
         """PRIVACY.md says the skeleton scripts make no network requests; keep it true."""
         pattern = re.compile(r"\bfetch\(|https?://|XMLHttpRequest|WebSocket|require\(['\"](https?|net|dgram)['\"]\)"
